@@ -6,11 +6,15 @@
         {
             public static HashSet<string> EmptyLookingCharacters = new HashSet<string>
             {
+                // Needs adjusting to correct "skippable" inter characters
+
                 " ", "_", "-", ".", ",", "=", "+", "~", "`", "'", "\"", "|", "/", "\\"
             };
 
             public static List<HashSet<string>> SubstitutionSets = new List<HashSet<string>>
             {
+                // Needs A-Z0-9 + special characters ( \s , . @ £ $ _ - ^ { } \ / [ ] ( )~ I € ! " % & ' * + < >= ?   )
+
                 new() { "a", "4", "@" },
                 new() { "b", "8", "ß" },
                 new() { "c", "(", "¢", "©" },

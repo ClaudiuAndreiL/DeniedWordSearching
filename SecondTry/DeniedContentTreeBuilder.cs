@@ -30,7 +30,7 @@
                 {
                     string multiCharString = charString + word[i + 1].ToString().ToLower();
                     if (_substitutions.Exists(set => set.Contains(multiCharString)))
-                    {
+                    {  
                         charString = multiCharString; // Use multi-character substitution
                         i++; // Skip the next character
                     }

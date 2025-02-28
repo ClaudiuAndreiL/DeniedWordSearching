@@ -14,10 +14,12 @@ namespace DeniedWordSearching
             "--9u ((180m84",
             "pueryv3r_.i_f_y",
 
+            "1ng",
+            "flying",
+
             "к-@2_4r.15",
             "f4-.nt4stlc",
-            "bing0ts",
-            "-fa.b-@-n_ka"
+            "bing0ts"
         };
 
         static void Main(string[] args)
@@ -63,7 +65,7 @@ namespace DeniedWordSearching
 
             var bannedWords = builderV2.GetAllBannedWords();
             Console.WriteLine($"Banned Words: {string.Join(", ", bannedWords)}");
-
+            Console.WriteLine(Environment.NewLine);
             foreach (var item in SearchWords)
             {
                 sw.Restart();
