@@ -6,40 +6,49 @@
         {
             public static HashSet<string> EmptyLookingCharacters = new HashSet<string>
             {
-                // Needs adjusting to correct "skippable" inter characters
-
-                " ", "_", "-", ".", ",", "=", "+", "~", "`", "'", "\"", "|", "/", "\\"
+                " ", "_", ".", "-"
             };
 
-            public static List<HashSet<string>> SubstitutionSets = new List<HashSet<string>>
+            // Needs A-Z0-9 + special characters ( \s , . @ £ $ _ - ^ { } \ / [ ] ( )~ I € ! " % & ' * + < >= ?   )
+            public static List<HashSet<string>> SubstitutionSets = new()
             {
-                // Needs A-Z0-9 + special characters ( \s , . @ £ $ _ - ^ { } \ / [ ] ( )~ I € ! " % & ' * + < >= ?   )
-
-                new() { "a", "4", "@" },
-                new() { "b", "8" },
-                new() { "c", "(" },
-                new() { "d", }, 
-                new() { "e", "3", "€" },
-                new() { "f"  },
-                new() { "g", "6", "9" },
-                new() { "h", "#" },
-                new() { "l", "i", "1", "|", "!", "£" }, // <- MERGED
-                new() { "j"  },
-                new() { "k"  },
-                new() { "m", "rn"  }, // <- KEPT
-                new() { "n"  },
-                new() { "o", "0", "q", "9" }, // <- MERGED
-                new() { "p" },
-                new() { "r" },
-                new() { "s", "5", "$" }, // <- REMOVED §
-                new() { "t", "7", "+" },
-                new() { "u" },
-                new() { "v" },
-                new() { "w" },
-                new() { "x" },
-                new() { "y" },
-                new() { "z", "2" }
+                new() { "0", "O", "Q", "o", "q" },
+                new() { "!", "1", "I", "i", "l" },
+                new() { "2", "Z", "z" },
+                new() { "3", "E", "e", "€" },
+                new() { "4", "@", "A", "a" },
+                new() { "$", "5", "S", "s" },
+                new() { "&", "6", "B", "G", "b", "g" },
+                new() { "+", "7", "T", "t" },
+                new() { "%", "8", "B" },
+                new() { "9", "P", "p" },
+                new() { "(", "C", "c" },
+                new() { "D", "cl", "d" },
+                new() { "F", "f" },
+                new() { "#", "H", "h" },
+                new() { ";", "J", "j" },
+                new() { "K", "X", "k", "x" },
+                new() { "M", "m", "nn", "rn" },
+                new() { "N", "n" },
+                new() { "R", "r" },
+                new() { "U", "V", "u", "v" },
+                new() { "W", "vv", "w" },
+                new() { "Y", "y" },
+                new() { "^" },
+                new() { "{", "}" },
+                new() { "[", "]" },
+                new() { "(", ")" },
+                new() { "<", ">" },
+                new() { ":", "=" },
+                new() { "\"", "'", "`" },
+                new() { "/", "\\" },
+                new() { "£" },
+                new() { "?" },
+                new() { "*" },
+                new() { "~" },
+                new() { "," },
             };
+
 
 
             //public static List<HashSet<string>> SubstitutionSets = new List<HashSet<string>>
