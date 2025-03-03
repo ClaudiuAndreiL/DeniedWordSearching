@@ -17,7 +17,7 @@ namespace DeniedWordSearching
             "1ng",
             "flying",
 
-            "к-@2_4r.15",
+            "k-@2_4r.@15",
             "f4-.nt4stlc",
             "bing0ts"
         };
