@@ -9,7 +9,7 @@ public class TreeNode
 public class TreeBuilder
 {
     private readonly TreeNode _root = new();
-    private static readonly HashSet<string> MultiCharSubstitutions = new() { "rn", "nn" };
+    private static readonly HashSet<string> MultiCharSubstitutions = new() { "rn", "nn", "vv" };
 
     public bool Insert(string input)
     {
