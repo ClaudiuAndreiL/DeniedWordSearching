@@ -1,11 +1,8 @@
-﻿using System;
-using DeniedWordSearching;
-using System.Collections.Generic;
-using System.Linq;
+﻿using DeniedWordSearching;
 
 public class TreeNode
 {
-    public Dictionary<string, TreeNode> Children { get; } = new();
+    public Dictionary<HashSet<string>, TreeNode> Children { get; } = new();
     public string? DeniedSender { get; set; } = null;
 }
 
@@ -16,23 +13,32 @@ public class TreeBuilder
 
     public bool Insert(string input)
     {
+        var alreadyExists = GetFirstDeniedSenderMatch(input);
+        if (alreadyExists is not null)
+        {
+            //Console.Writeline("ALREADY EXISTS {0} as {1}", input, alreadyExists);
+            return false;
+        }
+
         string sanitizedInput = Sanitize(input);
-        bool result = InsertRecursive(_root, sanitizedInput, 0, sanitizedInput);
-        Console.WriteLine(result ? $"Inserted: {sanitizedInput}" : $"Skipped: {sanitizedInput}");
+        var path = new List<HashSet<string>>();
+        bool result = InsertRecursive(_root, sanitizedInput, 0, sanitizedInput, path);
+
+        //Console.Writeline(result ? $"Inserted successfully. Path: {FormatPath(path)}" : "Insertion skipped.");
         return result;
     }
 
-    private bool InsertRecursive(TreeNode node, string original, int index, string remaining)
+    private bool InsertRecursive(TreeNode node, string original, int index, string remaining, List<HashSet<string>> path)
     {
         if (index >= remaining.Length)
         {
             if (node.DeniedSender != null)
             {
-                Console.WriteLine($"Skipping {original}, already exists as {node.DeniedSender}");
+                //Console.Writeline($"Skipping {original}, already exists as {node.DeniedSender}");
                 return false;
             }
             node.DeniedSender = original;
-            Console.WriteLine($"Added denied sender: {original}");
+            //Console.Writeline($"Added denied sender: {original}");
             return true;
         }
 
@@ -44,19 +50,13 @@ public class TreeBuilder
             throw new ArgumentException($"Invalid character '{remaining[index]}' found in input.");
         }
 
-        string key = string.Join(",", matchingSet.OrderBy(c => c));
-        if (!node.Children.ContainsKey(key))
+        path.Add(matchingSet);
+        if (!node.Children.ContainsKey(matchingSet))
         {
-            node.Children[key] = new TreeNode();
+            node.Children[matchingSet] = new TreeNode();
         }
 
-        if (GetFirstDeniedSenderMatch(original) != null)
-        {
-            Console.WriteLine($"Skipping {original}, conflicts with existing denied sender");
-            return false;
-        }
-
-        return InsertRecursive(node.Children[key], original, index + currentSegment.Length, remaining);
+        return InsertRecursive(node.Children[matchingSet], original, index + currentSegment.Length, remaining, path);
     }
 
     private string GetValidSegment(string input, int index)
@@ -76,54 +76,42 @@ public class TreeBuilder
     public string? GetFirstDeniedSenderMatch(string input)
     {
         string sanitizedInput = Sanitize(input);
-        List<string> attemptedPaths = new List<string>();
-
+        //Console.Writeline($"Searching: {sanitizedInput}");
+        List<HashSet<string>> path = new List<HashSet<string>>();
         for (int i = 0; i < sanitizedInput.Length; i++)
         {
-            List<string> path = new List<string>();
+            path.Clear();
             string? match = SearchForFirstMatch(_root, sanitizedInput, i, path);
             if (match != null)
             {
+                //Console.Writeline($"Found denied sender: {match}. Path: {FormatPath(path)}");
                 return match;
             }
-            attemptedPaths.Add("{ " + string.Join(" } -> { ", path) + " }");
         }
-
-        Console.WriteLine($"No denied sender found. Paths attempted:\n{string.Join("\n", attemptedPaths)}");
+        //Console.Writeline("No denied sender found.");
         return null;
     }
 
-    private string? SearchForFirstMatch(TreeNode node, string input, int index, List<string> path)
+    private string? SearchForFirstMatch(TreeNode node, string input, int index, List<HashSet<string>> path)
     {
         if (node == null) return null;
-        path.Add("(Root)");
         TreeNode currentNode = node;
         while (index < input.Length)
         {
             string currentSegment = GetValidSegment(input, index);
             HashSet<string>? matchingSet = Constants.V2.SubstitutionSets.FirstOrDefault(set => set.Contains(currentSegment));
 
-            if (matchingSet == null)
+            if (matchingSet == null || !currentNode.Children.ContainsKey(matchingSet))
             {
-                Console.WriteLine($"No match found for '{input[index]}' at index {index}. Path attempted: {{ {string.Join(" } -> { ", path)} }}");
                 return null;
             }
 
-            string key = string.Join(",", matchingSet.OrderBy(c => c));
-            if (!currentNode.Children.ContainsKey(key))
-            {
-                Console.WriteLine($"No match found for '{input[index]}' at index {index}. Expected key: {key}. Path attempted: {{ {string.Join(" } -> { ", path)} }}");
-                return null;
-            }
-
-            path.Add("{ " + string.Join(", ", matchingSet) + " }");
-            Console.WriteLine($"Moving to child node with key: {key}");
-            currentNode = currentNode.Children[key];
+            path.Add(matchingSet);
+            currentNode = currentNode.Children[matchingSet];
             if (currentNode.DeniedSender != null)
             {
                 if (currentNode.DeniedSender.Length > 3 || currentNode.DeniedSender.Length == input.Length)
                 {
-                    Console.WriteLine($"Found denied sender '{currentNode.DeniedSender}' on path: {string.Join(" -> ", path)}");
                     return currentNode.DeniedSender;
                 }
             }
@@ -132,9 +120,18 @@ public class TreeBuilder
         return null;
     }
 
+    private string FormatPath(List<HashSet<string>> path)
+    {
+        return string.Join(" -> ", path.Select(set => "{ " + string.Join(", ", set) + " }"));
+    }
+
     public void PrintTree()
     {
+        //Console.Writeline(Environment.NewLine);
+        //Console.Writeline("-------------------------Printing tree-------------------------");
         PrintTreeRecursive(_root, "");
+        //Console.Writeline("-------------------------End of tree-------------------------");
+        //Console.Writeline(Environment.NewLine);
     }
 
     private void PrintTreeRecursive(TreeNode node, string prefix)
@@ -142,12 +139,12 @@ public class TreeBuilder
         if (node == null) return;
         if (node.DeniedSender != null)
         {
-            Console.WriteLine(prefix + " -> Denied Sender: " + node.DeniedSender);
+            //Console.Writeline(prefix + " -> Denied Sender: " + node.DeniedSender);
         }
 
         foreach (var child in node.Children)
         {
-            Console.WriteLine(prefix + "-> " + child.Key);
+            //Console.Writeline(prefix + "-> " + FormatPath(new List<HashSet<string>> { child.Key }));
             PrintTreeRecursive(child.Value, prefix + "  ");
         }
     }
