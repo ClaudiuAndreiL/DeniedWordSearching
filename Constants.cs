@@ -6,14 +6,14 @@
         {
             public static HashSet<string> EmptyLookingCharacters = new HashSet<string>
             {
-                " ", "_", ".", "-"
+                " ", "_", ".", "-", ",", ">", "<", "*", "\"", "'"
             };
 
-            // Needs A-Z0-9 + special characters ( \s , . @ £ $ _ - ^ { } \ / [ ] ( )~ I € ! " % & ' * + < >= ?   )
+            // Needs a-zA-Z0-9 + special characters ( \s , . @ £ $ _ - ^ { } \ / [ ] ( )~ I € ! " % & ' * + < >= ?   )
             public static List<HashSet<string>> SubstitutionSets = new()
             {
                 new() { "0", "O", "Q", "o", "q" },
-                new() { "!", "1", "I", "i", "l", "L" },
+                new() { "I", "i", "l", "L", "!", "1" },
                 new() { "2", "Z", "z" },
                 new() { "3", "E", "e", "€" },
                 new() { "4", "@", "A", "a" },
@@ -42,9 +42,9 @@
                 new() { ":", "=" },
                 new() { "\"", "'", "`" },
                 new() { "/", "\\" },
-                new() { "£" },
                 new() { "?" },
                 new() { "*" },
+                new() { "£" },
                 new() { "~" },
                 new() { "," },
             };

@@ -16,7 +16,7 @@ public class TreeBuilder
         var alreadyExists = GetFirstDeniedSenderMatch(input);
         if (alreadyExists is not null)
         {
-            //Console.Writeline("ALREADY EXISTS {0} as {1}", input, alreadyExists);
+            Console.WriteLine("ALREADY EXISTS {0} as {1}", input, alreadyExists);
             return false;
         }
 
@@ -24,7 +24,7 @@ public class TreeBuilder
         var path = new List<HashSet<string>>();
         bool result = InsertRecursive(_root, sanitizedInput, 0, sanitizedInput, path);
 
-        //Console.Writeline(result ? $"Inserted successfully. Path: {FormatPath(path)}" : "Insertion skipped.");
+        Console.WriteLine(result ? $"Inserted '{input}' successfully. Path: {FormatPath(path)}" : "Insertion skipped.");
         return result;
     }
 
@@ -34,11 +34,11 @@ public class TreeBuilder
         {
             if (node.DeniedSender != null)
             {
-                //Console.Writeline($"Skipping {original}, already exists as {node.DeniedSender}");
+                //Console.WriteLine($"Skipping {original}, already exists as {node.DeniedSender}");
                 return false;
             }
             node.DeniedSender = original;
-            //Console.Writeline($"Added denied sender: {original}");
+            //Console.WriteLine($"Added denied sender: {original}");
             return true;
         }
 
@@ -76,7 +76,7 @@ public class TreeBuilder
     public string? GetFirstDeniedSenderMatch(string input)
     {
         string sanitizedInput = Sanitize(input);
-        //Console.Writeline($"Searching: {sanitizedInput}");
+        //Console.WriteLine($"Searching: {sanitizedInput}");
         List<HashSet<string>> path = new List<HashSet<string>>();
         for (int i = 0; i < sanitizedInput.Length; i++)
         {
@@ -84,11 +84,11 @@ public class TreeBuilder
             string? match = SearchForFirstMatch(_root, sanitizedInput, i, path);
             if (match != null)
             {
-                //Console.Writeline($"Found denied sender: {match}. Path: {FormatPath(path)}");
+                Console.WriteLine($"Found denied sender: {match}. Path: {FormatPath(path)}");
                 return match;
             }
         }
-        //Console.Writeline("No denied sender found.");
+        //Console.WriteLine("No denied sender found.");
         return null;
     }
 
@@ -125,27 +125,31 @@ public class TreeBuilder
         return string.Join(" -> ", path.Select(set => "{ " + string.Join(", ", set) + " }"));
     }
 
-    public void PrintTree()
+    public List<string> PrintTree()
     {
-        //Console.Writeline(Environment.NewLine);
-        //Console.Writeline("-------------------------Printing tree-------------------------");
-        PrintTreeRecursive(_root, "");
-        //Console.Writeline("-------------------------End of tree-------------------------");
-        //Console.Writeline(Environment.NewLine);
+        var fullList = new List<string>();
+
+        //Console.WriteLine(Environment.NewLine);
+        //Console.WriteLine("-------------------------Printing tree-------------------------");
+        PrintTreeRecursive(_root, "", fullList);
+        //Console.WriteLine("-------------------------End of tree-------------------------");
+        //Console.WriteLine(Environment.NewLine);
+        return fullList;
     }
 
-    private void PrintTreeRecursive(TreeNode node, string prefix)
+    private void PrintTreeRecursive(TreeNode node, string prefix, List<string> list)
     {
         if (node == null) return;
         if (node.DeniedSender != null)
         {
-            //Console.Writeline(prefix + " -> Denied Sender: " + node.DeniedSender);
+            list.Add(node.DeniedSender);
+            //Console.WriteLine(prefix + " -> Denied Sender: " + node.DeniedSender);
         }
 
         foreach (var child in node.Children)
         {
-            //Console.Writeline(prefix + "-> " + FormatPath(new List<HashSet<string>> { child.Key }));
-            PrintTreeRecursive(child.Value, prefix + "  ");
+            //Console.WriteLine(prefix + "-> " + FormatPath(new List<HashSet<string>> { child.Key }));
+            PrintTreeRecursive(child.Value, prefix + "  ", list);
         }
     }
 }

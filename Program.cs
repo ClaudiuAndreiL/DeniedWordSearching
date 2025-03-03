@@ -30,17 +30,14 @@ namespace DeniedWordSearching
         {
             TreeBuilder graph = new();
 
-            //var fileReader = File.ReadLines("C:\\Users\\Fremen\\Downloads\\sanitized.txt");
+            var fileReader = File.ReadLines("C:\\Users\\Fremen\\Downloads\\sanitized.txt");
 
-            //var orderedItems = fileReader.OrderBy(x => x.Length).ToList();
+            var orderedItems = fileReader.OrderBy(x => x.Length).ThenBy(x => x).ToList();
 
             var sw = new Stopwatch();
-            var deniedWords = new List<string> { "kazarais", "info", "ing", "bing", "- 1nf0219", "mama", "verify", "bank", "ingot", "charisma", "fantastic", "guccibomba", };
-            var faker = new Faker();
-            var extraDenied = Enumerable.Range(0, 5000).Select(x => faker.Random.Word().Split().Where(x => x.Length > 2).FirstOrDefault() ?? "test").ToList();
-            deniedWords.AddRange(extraDenied);
+            
             sw.Restart();
-            foreach (var word in deniedWords)
+            foreach (var word in orderedItems)
             {
                 sw.Restart();
                 graph.Insert(word);
@@ -48,8 +45,11 @@ namespace DeniedWordSearching
             }
             Console.WriteLine("TOTAL INSERT TOOK {0}ms", sw.Elapsed.TotalMilliseconds);
 
-            graph.PrintTree();   
+            var fullList = graph.PrintTree();   
             
+            var str = string.Join(Environment.NewLine, fullList);
+
+
             foreach (var word in SearchWords)
             {
                 sw.Restart();
