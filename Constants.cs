@@ -1,5 +1,26 @@
 ﻿namespace DeniedWordSearching
 {
+    public enum DeniedMatchTypeEnum
+    {
+        /// <summary>
+        /// Match found anywhere in the input, allowing substitutions.
+        /// e.g., "1nfo" or "bas1nf0asd" matches "info"
+        /// </summary>
+        ContainsMatch,
+
+        /// <summary>
+        /// Must match the entire input string, but substitutions are allowed.
+        /// e.g., "1ng" matches "ing"
+        /// </summary>
+        FuzzyMatch,
+
+        /// <summary>
+        /// Must match exactly — same characters, no substitutions.
+        /// e.g., "ing" matches only "ing"
+        /// </summary>
+        ExactMatch
+    }
+
     public static class Constants
     {
         public static class V5
@@ -117,6 +138,10 @@
                 { "=", new HashSet<string> { "=" } },
                 { "?", new HashSet<string> { "?" } }
             };
+
+            public static readonly Dictionary<string, HashSet<string>> MultiCharSubstitutions = Substitutions!
+                .Where(x => x.Key.Length > 1)
+                .ToDictionary(z => z.Key, v => v.Value);
         }
 
 

@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using DeniedWordSearching.Sixth;
 using System.Diagnostics;
 
 namespace DeniedWordSearching
@@ -29,16 +30,22 @@ namespace DeniedWordSearching
         static void Main(string[] args)
         {
             var faker = new Faker();
-            var builder = new TreeBuilderService();
-            var inputWords = new List<string> { "info", "macarena", "ing", "O2", "bomba" };
-            var otherWords = Enumerable.Range(0, 5000).Select(x => faker.Random.Word().Split(' ').First()).ToList();
-            var totalDeniedWords = inputWords.Union(otherWords).ToList().Distinct().ToList();
-            var sw = new Stopwatch();
-            builder.CreateGraph(totalDeniedWords);
-            Console.WriteLine("Insert took: " + sw.Elapsed.TotalMilliseconds + "ms");
-            sw.Restart();
-            var items = builder.GetAllItems();
-            Console.WriteLine("Got all {0}  in  {1}ms", items.Count, sw.Elapsed.TotalMilliseconds);
+            var builder = new GraphBuilderHelper();
+            var inputWords = new List<string> { "info" , "macarena", "ing", "O2", "bomba", "finfoa", "😃" };
+            var otherWords = Enumerable.Range(0, 1000000).SelectMany(x => faker.Random.Word().Split(' ')).ToList();
+            var totalDeniedWords = inputWords.Union(otherWords).ToList().Distinct().Take(10000).ToList();
+            var sw = Stopwatch.StartNew();
+            builder.InsertMultiple(totalDeniedWords);
+            Console.WriteLine("Insert took: " + sw.Elapsed.TotalMilliseconds + " (ms)");
+            sw.Restart();            
+
+            var items = builder.GetAllSenders();
+            //Console.WriteLine(string.Join(", ", items));
+            Console.WriteLine("Got all {0} in {1} ms", items.Count, sw.Elapsed.TotalMilliseconds);
+
+            var i1nfo = builder.Search("1nf0");
+            var inf0 = builder.Search("inf0");
+            var info = builder.Search("info");
             //items.ForEach(x => Console.WriteLine(x));
 
             var pairs = new Dictionary<string, string?>
