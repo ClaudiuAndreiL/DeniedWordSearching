@@ -32,7 +32,7 @@ namespace DeniedWordSearching
             var faker = new Faker();
             var builder = new GraphBuilderHelper();
             var inputWords = new List<string> { "info" , "macarena", "ing", "O2", "bomba", "finfoa", "😃" };
-            var otherWords = Enumerable.Range(0, 1000000).SelectMany(x => faker.Random.Word().Split(' ')).ToList();
+            var otherWords = Enumerable.Range(0, 10000).SelectMany(x => faker.Random.Word().Split(' ')).ToList();
             var totalDeniedWords = inputWords.Union(otherWords).ToList().Distinct().Take(10000).ToList();
             var sw = Stopwatch.StartNew();
             builder.InsertMultiple(totalDeniedWords);

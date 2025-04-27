@@ -1,10 +1,14 @@
-﻿using System.Diagnostics;
+﻿using DeniedWordSearching.sevents;
+using System.Diagnostics;
 
 namespace DeniedWordSearching.Sixth
 {
     public class GraphBuilderHelper
     {
-        private readonly GraphBuilderService _graphBuilderService = new();
+        //private readonly GraphBuilderService _graphBuilderService = new();
+
+        private readonly ExperimentalGraph2Service _graphBuilderService = new();
+
         public GraphBuilderHelper() { }
 
         public void InsertMultiple(List<string> senders)
@@ -33,13 +37,14 @@ namespace DeniedWordSearching.Sixth
                 var type = sender.Length < 3 ? DeniedMatchTypeEnum.ExactMatch : sender.Length == 3 ? DeniedMatchTypeEnum.FuzzyMatch : DeniedMatchTypeEnum.ContainsMatch;
 
                 inserted++;
-                _graphBuilderService.Insert(sender, type);
+                _graphBuilderService.Insert(sender);
+                //_graphBuilderService.Insert(sender, type);
             }
 
-            var all = _graphBuilderService.GetAllItems();
+            //var all = _graphBuilderService.GetAllItems();
 
-            Console.WriteLine("Bulk insert for {0} with {1} duplicates, and {2} unique took {3} ms. -> total inserted found {4}",
-                toInsert.Count, alreadyInserted, inserted, sw.Elapsed.TotalMilliseconds, all.Count);
+            Console.WriteLine("Bulk insert for {0} with {1} duplicates, and {2} unique took {3} ms. -> total inserted found //{4}",
+                toInsert.Count, alreadyInserted, inserted, sw.Elapsed.TotalMilliseconds, null);// all.Count);
         }
 
         public void InsertSingle(string sender)
